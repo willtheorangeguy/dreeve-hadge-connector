@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dreeve-hadge-connector"
+version = "0.1.0"
+description = "Deliver Hadge workout summaries to Dreeve's watch folder"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = ["requests>=2.32.5,<3", "fit-tool==0.9.16", "filelock>=3.20,<4"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10", "ruff>=0.14,<1", "fitdecode>=0.11,<1"]
+
+[project.scripts]
+dreeve-hadge-connector = "dreeve_hadge_connector.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
