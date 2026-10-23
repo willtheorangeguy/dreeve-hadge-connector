@@ -1,0 +1,22 @@
+services:
+  connector:
+    image: ghcr.io/willtheorangeguy/dreeve-hadge-connector:${CONNECTOR_VERSION:-0.1.0}
+    restart: unless-stopped
+    init: true
+    environment:
+      GITHUB_REPOSITORY: ${GITHUB_REPOSITORY:?Set GITHUB_REPOSITORY in .env}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?Set GITHUB_TOKEN in .env}
+      GITHUB_BRANCH: ${GITHUB_BRANCH:-}
+      SYNC_INTERVAL_SECONDS: ${SYNC_INTERVAL_SECONDS:-300}
+      EXPORT_SINCE: ${EXPORT_SINCE:-}
+      WATCH_DIR: /watch
+      STATE_DIR: /state
+    volumes:
+      - type: bind
+        source: ${DREEVE_WATCH_PATH:?Set DREEVE_WATCH_PATH in .env}
+        target: /watch
+        bind:
+          create_host_path: false
+      - connector-state:/state
+volumes:
+  connector-state:

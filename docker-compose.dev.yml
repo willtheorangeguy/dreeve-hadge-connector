@@ -1,0 +1,6 @@
+# Source-checkout development only:
+# docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+services:
+  connector:
+    image: dreeve-hadge-connector:dev
+    build: .
