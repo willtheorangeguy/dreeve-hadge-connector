@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 @dataclass(frozen=True)
 class Config:
     repository: str
-    token_file: Path
+    token_file: Path | None
     watch_dir: Path = Path("/watch")
     state_dir: Path = Path("/state")
     branch: str | None = None
@@ -23,8 +23,8 @@ class Config:
         if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
             raise ValueError("GITHUB_REPOSITORY must be owner/repository")
         token_file = os.environ.get("GITHUB_TOKEN_FILE", "")
-        if not token_file:
-            raise ValueError("GITHUB_TOKEN_FILE is required")
+        if not token_file and not os.environ.get("GITHUB_TOKEN", "").strip():
+            raise ValueError("Set GITHUB_TOKEN or GITHUB_TOKEN_FILE")
         interval = int(os.environ.get("SYNC_INTERVAL_SECONDS", "300"))
         if interval < 30:
             raise ValueError("SYNC_INTERVAL_SECONDS must be at least 30")
@@ -39,16 +39,21 @@ class Config:
             if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw_since):
                 raise ValueError("EXPORT_SINCE must be YYYY-MM-DD")
             since = datetime.strptime(raw_since, "%Y-%m-%d").replace(tzinfo=UTC)
-        return cls(repository.lower(), Path(token_file),
+        return cls(repository.lower(), Path(token_file) if token_file else None,
                    Path(os.environ.get("WATCH_DIR", "/watch")),
                    Path(os.environ.get("STATE_DIR", "/state")),
                    os.environ.get("GITHUB_BRANCH") or None, interval, since, api_url)
 
     def token(self):
-        try:
-            token = self.token_file.read_text(encoding="utf-8").strip()
-        except OSError:
-            raise ValueError("Cannot read GITHUB_TOKEN_FILE") from None
+        if self.token_file is not None:
+            try:
+                token = self.token_file.read_text(encoding="utf-8").strip()
+            except OSError:
+                raise ValueError("Cannot read GITHUB_TOKEN_FILE") from None
+            source = "GITHUB_TOKEN_FILE"
+        else:
+            token = os.environ.get("GITHUB_TOKEN", "").strip()
+            source = "GITHUB_TOKEN"
         if not token or any(c.isspace() for c in token):
-            raise ValueError("GITHUB_TOKEN_FILE must contain one nonempty token")
+            raise ValueError(f"{source} must contain one nonempty token")
         return token

@@ -92,11 +92,38 @@ def test_config_defaults_and_date(config, monkeypatch):
     ("SYNC_INTERVAL_SECONDS", "0"), ("GITHUB_TOKEN_FILE", ""),
 ])
 def test_bad_config(config, monkeypatch, key, value):
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
     monkeypatch.setenv("GITHUB_REPOSITORY", "example/health")
     monkeypatch.setenv("GITHUB_TOKEN_FILE", str(config.token_file))
     monkeypatch.setenv(key, value)
     with pytest.raises(ValueError):
         Config.from_env()
+
+
+def test_environment_token_needs_no_file(config, monkeypatch):
+    monkeypatch.setenv("GITHUB_REPOSITORY", "example/health")
+    monkeypatch.delenv("GITHUB_TOKEN_FILE", raising=False)
+    monkeypatch.setenv("GITHUB_TOKEN", "synthetic-env-token")
+    parsed = Config.from_env()
+    assert parsed.token_file is None
+    assert parsed.token() == "synthetic-env-token"
+    assert "synthetic-env-token" not in repr(parsed)
+    client = GitHub(parsed)
+    assert client.session.headers["Authorization"] == "Bearer synthetic-env-token"
+    client.close()
+
+
+def test_token_file_takes_precedence(config, monkeypatch):
+    monkeypatch.setenv("GITHUB_TOKEN", "ignored-env-token")
+    assert config.token() == "fake-test-token"
+
+
+@pytest.mark.parametrize("value", ["", "two tokens"])
+def test_bad_environment_token(config, monkeypatch, value):
+    monkeypatch.setenv("GITHUB_TOKEN", value)
+    with pytest.raises(ValueError, match="GITHUB_TOKEN") as error:
+        replace(config, token_file=None).token()
+    assert "two tokens" not in str(error.value)
 
 
 @pytest.mark.parametrize("value", ["file:///tmp/mock", "https://user:secret@example.test",
