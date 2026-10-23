@@ -1,0 +1,91 @@
+services:
+  github:
+    build:
+      context: .
+      dockerfile: mock.Dockerfile
+    volumes:
+      - type: bind
+        source: ${HADGE_FIXTURE_DIR}
+        target: /fixture
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks: [test]
+  app:
+    image: ghcr.io/dreeveapp/dreeve:v5.6.2
+    environment: &dreeve-env
+      IMPORT_MODE: files
+      APP_ENV: prod
+      TZ: UTC
+      APP_SECRET: synthetic-integration-secret-do-not-deploy
+      APP_URL: http://localhost:8080
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD_HASH: unused
+      DREEVE_API_KEY: drv_1111111111111111111111111111111111111111111111111111111111111111
+    volumes: &dreeve-volumes
+      - build:/var/www/build
+      - database:/var/www/storage/database
+      - files:/var/www/storage/files
+      - type: bind
+        source: ${HADGE_FIXTURE_DIR}/watch
+        target: /var/www/watch
+      - type: bind
+        source: .
+        target: /harness
+        read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:2019/metrics"]
+      interval: 2s
+      timeout: 5s
+      retries: 60
+      start_period: 5s
+    networks: [test]
+  daemon:
+    image: ghcr.io/dreeveapp/dreeve:v5.6.2
+    environment: *dreeve-env
+    volumes: *dreeve-volumes
+    command: ["bin/console", "app:daemon:run"]
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(is_file('/var/www/storage/database/dreeve.db') ? 0 : 1);"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    depends_on:
+      app:
+        condition: service_healthy
+    networks: [test]
+  connector:
+    build:
+      context: ../..
+    environment:
+      GITHUB_REPOSITORY: synthetic/health
+      GITHUB_TOKEN_FILE: /fixture/connector-token
+      GITHUB_API_URL: http://github:8000
+      SYNC_INTERVAL_SECONDS: '30'
+      WATCH_DIR: /watch
+      STATE_DIR: /state
+    volumes:
+      - type: bind
+        source: ${HADGE_FIXTURE_DIR}
+        target: /fixture
+        read_only: true
+      - type: bind
+        source: ${HADGE_FIXTURE_DIR}/watch
+        target: /watch
+      - state:/state
+    depends_on:
+      github:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    networks: [test]
+volumes:
+  build:
+  database:
+  files:
+  state:
+networks:
+  test:
+    internal: true
