@@ -183,6 +183,7 @@ def main():
             commit(repo, "Correct rejected row before replay")
             compose("stop", "connector")
             replay_log = compose("run", "--rm", "-T", "-e", "STATE_DIR=/tmp/replay-state",
+                                 "-e", "GITHUB_TOKEN_FILE=", "-e", f"GITHUB_TOKEN={TOKEN}",
                                  "connector", "sync", include_stderr=True)
             (report / "replay-delivery.log").write_text(replay_log, encoding="utf-8")
             assert "delivered=6" in replay_log
@@ -205,6 +206,7 @@ def main():
                 "commits": [first_commit, second_commit], "automatic_imports": True,
                 "web_api_verified": True, "token_rotation_verified": True,
                 "restart_cache_verified": True, "http_retry_verified": True,
+                "environment_token_verified": True,
             }, indent=2), encoding="utf-8")
             print("PASS: full HTTP workflow, automatic imports, recovery, and duplicate replay", flush=True)
         finally:
