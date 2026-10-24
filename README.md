@@ -1,5 +1,10 @@
 # Hadge → Dreeve connector
 
+[![Documentation](https://img.shields.io/badge/docs-online-c33207)](https://williamvdg.me/dreeve-hadge-connector/)
+
+Read the [documentation site](https://williamvdg.me/dreeve-hadge-connector/) or browse
+[the guides in this repository](docs/index.md).
+
 Automatically deliver Apple Health workout summaries to Dreeve:
 
 **Apple Health → [Hadge](https://github.com/ashtom/hadge) → your private GitHub
