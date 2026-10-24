@@ -15,6 +15,8 @@ supplies the final site shape where the two phases differ.
   and the site includes it by exact path. No licensing decision or runtime
   packaging change is part of the docs pass.
 - Include the root changelog by reference. Link to account-wide health files.
+- Use Issues for support. The standard Discussions creation URL returns 404
+  because this repository does not have Discussions enabled.
 - Document the CLI as the public interface. Describe consumed GitHub requests
   without presenting internal Python functions as a stable library API.
 - Inherit shared configuration and use reusable workflows. Generated theme

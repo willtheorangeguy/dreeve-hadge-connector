@@ -57,4 +57,4 @@ Follow [Getting started](./getting-started.md) for the complete sequence and how
 
 ## Support
 
-Open a [GitHub Discussion](https://github.com/willtheorangeguy/dreeve-hadge-connector/discussions/new) or file an [issue](https://github.com/willtheorangeguy/dreeve-hadge-connector/issues/new/choose). Remove tokens, private repository details, workout names, and identifiers from diagnostics before sharing them.
+File an [issue](https://github.com/willtheorangeguy/dreeve-hadge-connector/issues/new/choose). Remove tokens, private repository details, workout names, and identifiers from diagnostics before sharing them.
