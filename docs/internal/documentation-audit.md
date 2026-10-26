@@ -73,3 +73,13 @@ existing README allowance. The verifier's notices about `quickstart.md` and
 site returns HTTP 200; the latest remote Docs and Docs Lint runs succeeded.
 The user subsequently authorized pulling and pushing these three documentation
 edits and verifying the resulting workflow runs and live site.
+
+## README house style
+
+The user subsequently requested the root README match the other projects,
+overriding the rollout's README-preservation rule for this change. Applied the
+sweep template's centered title and tagline, linked badges, section navigation,
+key features, one installation path, minimal usage, and standard closing sections.
+Detailed operating guidance remains in the existing documentation pages. The
+README passes the sweep verifier under its default 120-line allowance. Keep the
+working issue-tracker link and canonical `LICENSE` path for this repository.
