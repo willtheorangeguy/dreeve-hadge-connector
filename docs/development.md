@@ -74,6 +74,26 @@ uv run --no-project mkdocs build --strict
 
 The default preview port is 8000. Read `docs/docs.instructions.md` before writing prose. Do not redeclare `plugins` or `markdown_extensions` in the project `mkdocs.yml`: lists replace the inherited settings. All authored site pages belong in the nav; `internal/` and the writing standard are excluded.
 
+### Check a documentation change
+
+Run the strict build above and the shared Markdown rules before submitting documentation changes. The Markdown check requires Node.js and npm:
+
+```sh
+npx --yes markdownlint-cli2 --config .mkdocs-shared/shared/lint/.markdownlint.jsonc "docs/**/*.md"
+```
+
+Keep the following sources aligned when behavior changes:
+
+| Change | Documentation to review |
+| --- | --- |
+| Environment setting or default | [Configuration](./configuration.md), `.env.example`, and Compose definitions |
+| CLI command, exit code, or counter | [CLI reference](./api.md), [Usage](./usage.md), and [Troubleshooting](./troubleshooting.md) |
+| CSV validation or FIT output | [Data reference](./data.md) and [Limitations](./roadmap.md) |
+| Delivery, persistence, or replay | [Architecture](./architecture.md) and [Recovery](./recovery.md) |
+| Release version or workflow | [Releases](./releases.md), [CI/CD](./ci-cd.md), and pinned installation examples |
+
+Add each new public page to `mkdocs.yml` and update inbound links when renaming a page. Keep changelog and license pages as includes of the root files. The pull-request workflow also checks external links; a local strict build checks internal documentation targets but does not request external URLs.
+
 ## Contribution policy
 
 Follow the account-wide [Contributing guide](https://github.com/willtheorangeguy/.github/blob/main/CONTRIBUTING.md) and [Code of conduct](https://github.com/willtheorangeguy/.github/blob/main/CODE_OF_CONDUCT.md). Report sensitive issues using the [Security policy](https://github.com/willtheorangeguy/.github/blob/main/SECURITY.md). Keep credentials, health exports, state databases, and local artifacts out of commits.

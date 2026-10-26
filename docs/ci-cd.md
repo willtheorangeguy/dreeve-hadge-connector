@@ -15,7 +15,7 @@ uv run --no-project ruff check .
 
 ## Release publication
 
-`.github/workflows/release.yml` responds to a published GitHub release. It validates tag/package metadata, calls the test workflow, then builds and publishes the image. Setup assets upload only after the image publication succeeds. See [Releases](./releases.md) for prerequisites and artifacts.
+`.github/workflows/publish.yml` responds to a published GitHub release. It validates tag/package metadata, calls the test workflow, then builds and publishes the image. Setup assets upload only after the image publication succeeds. See [Releases](./releases.md) for prerequisites and artifacts.
 
 The workflow grants package write access only to image publication and content write access only to release-asset upload. The repository-scoped `GITHUB_TOKEN` supplies publication credentials. Concurrent releases queue rather than cancelling an in-progress publication.
 

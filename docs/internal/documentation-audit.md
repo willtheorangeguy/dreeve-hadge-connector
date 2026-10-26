@@ -47,3 +47,29 @@ Behavioral claims follow implementation first, then tests and workflows.
 No application-code changes or undocumented future feature commitments are
 included in this pass. Current compatibility and input limits are documented
 in the site's Limitations page.
+
+## Revalidation on 2026-10-26
+
+The repository already contains the completed 19-page documentation package
+and shared MkDocs site. The sweep ledger records the original deployment in
+commits `ea2e616` and `2f02758`. The scope and publication instructions above
+describe that original pass.
+
+Rechecked the local sweep runbook, MkDocs rollout, writing standard, current
+source modules, tests, and workflows. GitHub metadata confirms the repository
+is active, its default branch is `main`, and Pages uses workflow deployment
+at `https://williamvdg.me/dreeve-hadge-connector/`. The account Pages CNAME
+remains `williamvdg.me`.
+
+Corrected the CI/CD guide's stale release-workflow filename to `publish.yml`.
+Added the shared Markdown check and a behavior-to-documentation maintenance
+table to the development guide. Preserve the root README and the existing
+site structure under the MkDocs rollout's migration rules.
+
+Validation passed: `mkdocs build --strict`, shared Markdown lint across 21
+files with zero issues, `git diff --check`, and the sweep verifier with the
+existing README allowance. The verifier's notices about `quickstart.md` and
+`LICENSE.md` correspond to the documented filename choices above. The live
+site returns HTTP 200; the latest remote Docs and Docs Lint runs succeeded.
+The user subsequently authorized pulling and pushing these three documentation
+edits and verifying the resulting workflow runs and live site.
